@@ -5,9 +5,10 @@ const sanitize = require('sanitize-filename');
 const debug = require('debug')('publikator:organise');
 const tags = require('./tags');
 
-const getFolderName = file => `${file.tags.artist} - ${file.tags.album}`;
+const getArtists = file => file.common.artist || file.common.artists.join(', ');
+const getFolderName = file => `${getArtists(file)} - ${file.common.album}`;
 const getFileName = file =>
-  `${file.tags.track} - ${file.tags.title}${path.extname(file.path)}`;
+  `${file.common.track.no} - ${file.common.title}${path.extname(file.path)}`;
 
 module.exports = {
   /**
@@ -22,7 +23,12 @@ module.exports = {
    */
   byAlbum: async (root, taggedFiles) => {
     const files = taggedFiles.filter(file =>
-      tags.hasTags(file, ['artist', 'album', 'track', 'title'])
+      tags.hasTags(file, [
+        'common.artists',
+        'common.album',
+        'common.track',
+        'common.title',
+      ])
     );
 
     debug(`grouping tracks by album`);

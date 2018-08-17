@@ -18,17 +18,10 @@ module.exports = {
           'track-count': tracks.length,
           tracks: tracks.map((track, i) => ({
             path: track.path,
-            size: track.size,
             position: i,
-            ...tags.getTags(track, [
-              'title',
-              'artist',
-              'album',
-              'year',
-              'comment',
-              'track',
-              'genre',
-            ]),
+            common: track.common,
+            format: track.format,
+            ...tags.getTags(track, ['foo']),
           })),
         };
       })

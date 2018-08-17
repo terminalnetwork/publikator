@@ -22,7 +22,7 @@ module.exports = {
 
   /**
    * Reads ID3 tags from all files and returns an array in the form of:
-   * [{ path, size, tags }, ...]
+   * [{ path, common, format, native }, ...]
    */
   readTags: files => {
     debug(`reading tags from ${files.length} file(s)`);
@@ -31,8 +31,7 @@ module.exports = {
         const info = await tags.readTags(file);
         return {
           path: file,
-          size: info.size,
-          tags: info.tags,
+          ...info,
         };
       })
     );

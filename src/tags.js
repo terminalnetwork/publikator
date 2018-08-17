@@ -1,4 +1,5 @@
-const jsmediatags = require('jsmediatags');
+const _ = require('lodash');
+const mm = require('music-metadata');
 const debug = require('debug')('publikator:tags');
 
 module.exports = {
@@ -6,24 +7,17 @@ module.exports = {
    * Reads tags from a track.
    */
   readTags: file =>
-    new Promise((resolve, reject) => {
-      jsmediatags.read(file, {
-        onSuccess: info => {
-          resolve(info);
-        },
-        onError: error => {
-          debug(error.type);
-          debug(error.info);
-          reject(error);
-        },
-      });
+    mm.parseFile(file, {
+      duration: true,
+      native: true,
+      skipCovers: false,
     }),
 
   /**
    * Returns true if a file has all required tags.
    */
   hasTags: (taggedFile, tags) => {
-    if (tags.some(tag => taggedFile.tags[tag] === undefined)) {
+    if (tags.some(tag => _.get(taggedFile, tag) === undefined)) {
       debug(`track'${taggedFile.path}' is missing one or more required tags`);
       return false;
     }
@@ -35,8 +29,9 @@ module.exports = {
    */
   getTags: (taggedFile, tags) =>
     tags.reduce((all, tag) => {
-      if (taggedFile.tags[tag] !== undefined) {
-        all[tag] = taggedFile.tags[tag]; // eslint-disable-line
+      const value = _.get(taggedFile, tag);
+      if (value !== undefined) {
+        all[tag] = value; // eslint-disable-line
       }
       return all;
     }, {}),

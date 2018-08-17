@@ -1,10 +1,10 @@
 {
   "name": "publikator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "index.js",
   "repository": "https://github.com/aengl/publikator.git",
   "author": "Lynn Smeria <ae@cephea.de>",
-  "license": "MIT",
+  "license": "Unlicense",
   "bin": {
     "publikator": "publikator.js"
   },
@@ -16,8 +16,8 @@
     "debug": "3.1.0",
     "fs-extra": "7.0.0",
     "js-yaml": "3.12.0",
-    "jsmediatags": "3.8.1",
     "lodash": "4.17.10",
+    "music-metadata": "2.6.0",
     "sanitize-filename": "1.6.1",
     "walkdir": "0.0.12"
   },
