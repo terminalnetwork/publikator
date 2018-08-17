@@ -39,8 +39,8 @@ program
     }
     fs.ensureDirSync(args.target);
     const files = scan.findFilesSync(source);
-    const filesWithTags = await scan.readTags(files);
-    const organisedFiles = await organise.byAlbum(target, filesWithTags);
+    const taggedFiles = await scan.readTags(files);
+    const organisedFiles = await organise.byAlbum(target, taggedFiles);
     const releaseInfo = generate.releaseInfo(organisedFiles);
     fs.writeFileSync(path.resolve(target, 'releases.yml'), releaseInfo);
   });

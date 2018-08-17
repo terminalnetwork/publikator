@@ -2,17 +2,15 @@ const path = require('path');
 const _ = require('lodash');
 const yaml = require('js-yaml');
 const debug = require('debug')('publikator:generate');
-
-const getTags = (track, tags) =>
-  tags.reduce((all, tag) => {
-    all[tag] = track[tag]; // eslint-disable-line
-    return all;
-  }, {});
+const tags = require('./tags');
 
 module.exports = {
-  releaseInfo: files => {
-    debug(`generating release info for ${files.length} file(s)`);
-    const albums = _.groupBy(files, file => path.dirname(file.path));
+  /**
+   * Generates a release YAML with data
+   */
+  releaseInfo: taggedFiles => {
+    debug(`generating release info for ${taggedFiles.length} file(s)`);
+    const albums = _.groupBy(taggedFiles, file => path.dirname(file.path));
     return yaml.safeDump(
       Object.keys(albums).map(key => {
         const tracks = albums[key];
@@ -22,7 +20,7 @@ module.exports = {
             path: track.path,
             size: track.size,
             position: i,
-            tags: getTags(track.tags, [
+            ...tags.getTags(track, [
               'title',
               'artist',
               'album',

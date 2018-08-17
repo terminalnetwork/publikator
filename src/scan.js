@@ -1,8 +1,11 @@
 const debug = require('debug')('publikator:scan');
-const jsmediatags = require('jsmediatags');
 const walk = require('walkdir');
+const tags = require('./tags');
 
 module.exports = {
+  /**
+   * Recursively searches for files.
+   */
   findFilesSync: (root, extension = '.mp3') => {
     debug(
       `scanning directory '${root}' for files with extension '${extension}'`
@@ -17,28 +20,21 @@ module.exports = {
     return files;
   },
 
+  /**
+   * Reads ID3 tags from all files and returns an array in the form of:
+   * [{ path, size, tags }, ...]
+   */
   readTags: files => {
-    debug(`reading tags for ${files.length} file(s)`);
+    debug(`reading tags from ${files.length} file(s)`);
     return Promise.all(
-      files.map(
-        file =>
-          new Promise((resolve, reject) => {
-            jsmediatags.read(file, {
-              onSuccess: info => {
-                resolve({
-                  path: file,
-                  size: info.size,
-                  tags: info.tags,
-                });
-              },
-              onError: error => {
-                debug(error.type);
-                debug(error.info);
-                reject(error);
-              },
-            });
-          })
-      )
+      files.map(async file => {
+        const info = await tags.readTags(file);
+        return {
+          path: file,
+          size: info.size,
+          tags: info.tags,
+        };
+      })
     );
   },
 };
