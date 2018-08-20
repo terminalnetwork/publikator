@@ -3,13 +3,34 @@ const path = require('path');
 const _ = require('lodash');
 const sanitize = require('sanitize-filename');
 const debug = require('debug')('publikator:organise');
+const mime = require('mime-types');
 const tags = require('./tags');
 
 const getFolderName = file => file.common.album.replace(/ /g, '_');
+
 const getFileName = file =>
   `${file.common.track.no}-${file.common.title}${path.extname(
     file.path
   )}`.replace(/ /g, '_');
+
+/**
+ * Extracts the cover art and saves it to a file with the same name.
+ */
+const extractCoverArt = async filePath => {
+  const pictures = await tags.extractCoverArt(filePath);
+  if (pictures) {
+    await Promise.all(
+      pictures.map(async picture => {
+        const pictureExt = mime.extension(picture.format);
+        const picturePath = `${filePath.replace(
+          path.extname(filePath),
+          ''
+        )}.${pictureExt}`;
+        await fs.writeFile(picturePath, picture.data);
+      })
+    );
+  }
+};
 
 module.exports = {
   /**
@@ -42,13 +63,14 @@ module.exports = {
       folders.map(album => fs.ensureDir(path.resolve(root, sanitize(album))))
     );
 
-    debug(`copying tracks`);
+    debug(`copying tracks & extracting covers`);
     return Promise.all(
       files.map(async file => {
         const folderName = getFolderName(file);
         const fileName = getFileName(file);
         const newPath = path.resolve(root, folderName, fileName);
         await fs.copyFile(file.path, newPath);
+        await extractCoverArt(newPath);
         return _.assign(
           {},
           {

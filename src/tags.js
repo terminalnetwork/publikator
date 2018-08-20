@@ -10,8 +10,20 @@ module.exports = {
     mm.parseFile(file, {
       duration: true,
       native: true,
-      skipCovers: false,
+      skipCovers: true,
     }),
+
+  /**
+   * Extracts the cover art into a file stream.
+   */
+  extractCoverArt: async file => {
+    const data = await mm.parseFile(file, {
+      duration: false,
+      native: false,
+      skipCovers: false,
+    });
+    return data.common.picture;
+  },
 
   /**
    * Returns true if a file has all required tags.
