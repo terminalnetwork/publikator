@@ -41,8 +41,7 @@ program
     const files = scan.findFilesSync(source);
     const taggedFiles = await scan.readTags(files);
     const organisedFiles = await organise.byAlbum(target, taggedFiles);
-    const releaseInfo = generate.releaseInfo(organisedFiles);
-    fs.writeFileSync(path.resolve(target, 'releases.yml'), releaseInfo);
+    generate.generateReleaseInfo(organisedFiles);
   });
 
 debug(process.argv);
