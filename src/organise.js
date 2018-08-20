@@ -5,10 +5,11 @@ const sanitize = require('sanitize-filename');
 const debug = require('debug')('publikator:organise');
 const tags = require('./tags');
 
-const getArtists = file => file.common.artist || file.common.artists.join(', ');
-const getFolderName = file => `${getArtists(file)} - ${file.common.album}`;
+const getFolderName = file => file.common.album.replace(/ /g, '_');
 const getFileName = file =>
-  `${file.common.track.no} - ${file.common.title}${path.extname(file.path)}`;
+  `${file.common.track.no}-${file.common.title}${path.extname(
+    file.path
+  )}`.replace(/ /g, '_');
 
 module.exports = {
   /**
@@ -44,13 +45,20 @@ module.exports = {
     debug(`copying tracks`);
     return Promise.all(
       files.map(async file => {
-        const newPath = path.resolve(
-          root,
-          getFolderName(file),
-          getFileName(file)
-        );
+        const folderName = getFolderName(file);
+        const fileName = getFileName(file);
+        const newPath = path.resolve(root, folderName, fileName);
         await fs.copyFile(file.path, newPath);
-        return _.assign({}, file, { path: newPath });
+        return _.assign(
+          {},
+          {
+            path: newPath,
+            relativePath: `${folderName}/${fileName}`,
+            folderName,
+            fileName,
+          },
+          _.omit(file, 'path')
+        );
       })
     );
   },

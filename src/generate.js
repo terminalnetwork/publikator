@@ -20,15 +20,13 @@ const collect = (tracks, callback) => {
 /**
  * Creates release information for a single album.
  */
-const getAlbumInfo = tracks => {
-  return {
-    artists: collect(tracks, t => t.common.artists || t.common.artist),
-    album: collect(tracks, t => t.common.album),
-    bitrate: collect(tracks, t => t.format.bitrate),
-    trackCount: tracks.length,
-    tracks,
-  };
-};
+const getAlbumInfo = tracks => ({
+  artists: collect(tracks, t => t.common.artists || t.common.artist),
+  album: collect(tracks, t => t.common.album),
+  bitrate: collect(tracks, t => t.format.bitrate),
+  trackCount: tracks.length,
+  tracks,
+});
 
 module.exports = {
   /**
@@ -37,13 +35,14 @@ module.exports = {
   generateReleaseInfo: taggedFiles => {
     const albums = _.groupBy(taggedFiles, file => path.dirname(file.path));
     _.forEach(albums, (albumTracks, albumRoot) => {
+      const baseName = path.basename(albumRoot);
       debug(
-        `generating release info for album '${path.basename(albumRoot)}' with ${
+        `generating release info for album '${baseName}' with ${
           albumTracks.length
         } track(s)`
       );
       const releaseInfo = yaml.safeDump(getAlbumInfo(albumTracks));
-      fs.writeFileSync(path.resolve(albumRoot, 'release.yml'), releaseInfo);
+      fs.writeFileSync(path.resolve(albumRoot, `${baseName}.yml`), releaseInfo);
     });
   },
 };
