@@ -19,17 +19,16 @@ const getFileName = file =>
 const extractCoverArt = async filePath => {
   const pictures = await tags.extractCoverArt(filePath);
   if (pictures) {
-    await Promise.all(
-      pictures.map(async picture => {
-        const pictureExt = mime.extension(picture.format);
-        const picturePath = `${filePath.replace(
-          path.extname(filePath),
-          ''
-        )}.${pictureExt}`;
-        await fs.writeFile(picturePath, picture.data);
-      })
-    );
+    const picture = pictures[0];
+    const pictureExt = mime.extension(picture.format);
+    const picturePath = `${filePath.replace(
+      path.extname(filePath),
+      ''
+    )}.${pictureExt}`;
+    await fs.writeFile(picturePath, picture.data);
+    return picturePath;
   }
+  return null;
 };
 
 module.exports = {
@@ -70,7 +69,7 @@ module.exports = {
         const fileName = getFileName(file);
         const newPath = path.resolve(root, folderName, fileName);
         await fs.copyFile(file.path, newPath);
-        await extractCoverArt(newPath);
+        const coverPath = await extractCoverArt(newPath);
         return _.assign(
           {},
           {
@@ -79,6 +78,13 @@ module.exports = {
             folderName,
             fileName,
           },
+          coverPath
+            ? {
+                coverPath,
+                relativeCoverPath: `${folderName}/${path.basename(coverPath)}`,
+                coverFileName: path.basename(coverPath),
+              }
+            : {},
           _.omit(file, 'path')
         );
       })
