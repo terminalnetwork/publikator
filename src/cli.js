@@ -41,7 +41,7 @@ program
     const files = scan.findFilesSync(source);
     const taggedFiles = await scan.readTags(files);
     const organisedFiles = await organise.byAlbum(target, taggedFiles);
-    generate.generateReleaseInfo(organisedFiles);
+    await generate.generateReleaseInfo(target, organisedFiles);
   });
 
 debug(process.argv);

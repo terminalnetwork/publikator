@@ -20,29 +20,71 @@ const collect = (tracks, callback) => {
 /**
  * Creates release information for a single album.
  */
-const getAlbumInfo = tracks => ({
+const getAlbumInfo = (root, tracks) => ({
+  layout: 'album',
+  slug: path.basename(root),
+  name: tracks[0].common.album || '',
   artists: collect(tracks, t => t.common.artists || t.common.artist),
-  album: collect(tracks, t => t.common.album),
   bitrate: collect(tracks, t => t.format.bitrate),
   trackCount: tracks.length,
+  cover: tracks[0].coverUrl || null,
   tracks,
 });
 
 module.exports = {
   /**
-   * Generates a release YAML with data
+   * Generates Jekyll-compatible release data
    */
-  generateReleaseInfo: taggedFiles => {
+  generateReleaseInfo: async (root, taggedFiles) => {
+    // Create collections
+    const trackCollectionRoot = path.resolve(root, '_tracks');
+    await fs.ensureDir(trackCollectionRoot);
+
     const albums = _.groupBy(taggedFiles, file => path.dirname(file.path));
-    _.forEach(albums, (albumTracks, albumRoot) => {
-      const baseName = path.basename(albumRoot);
-      debug(
-        `generating release info for album '${baseName}' with ${
-          albumTracks.length
-        } track(s)`
-      );
-      const releaseInfo = yaml.safeDump(getAlbumInfo(albumTracks));
-      fs.writeFileSync(path.resolve(albumRoot, `${baseName}.yml`), releaseInfo);
-    });
+    const albumsInfo = await Promise.all(
+      _.map(albums, async (tracks, albumRoot) => {
+        const baseName = path.basename(albumRoot);
+        const albumCollectionRoot = path.resolve(root, '_albums');
+        await fs.ensureDir(albumCollectionRoot);
+        debug(
+          `generating release info for album '${baseName}' with ${
+            tracks.length
+          } track(s)`
+        );
+        const albumInfo = getAlbumInfo(albumRoot, tracks);
+        const releaseInfo = `---\n${yaml.safeDump(albumInfo)}---\n`;
+        await fs.writeFile(
+          path.resolve(albumCollectionRoot, `${baseName}.md`),
+          releaseInfo
+        );
+
+        // Write track collection
+        await Promise.all(
+          tracks.map(async track => {
+            const trackInfoPath = path.resolve(
+              trackCollectionRoot,
+              baseName,
+              `${track.slug}.md`
+            );
+            await fs.ensureFile(trackInfoPath);
+            await fs.writeFile(
+              trackInfoPath,
+              `---\n${yaml.safeDump({
+                layout: 'track',
+                ...track,
+              })}---\n`
+            );
+          })
+        );
+
+        return albumInfo;
+      })
+    );
+
+    // Create album data
+    debug(`generating data for ${albumsInfo.length} album(s)`);
+    const albumsInfoPath = path.resolve(root, '_data', 'albums.yml');
+    await fs.ensureFile(albumsInfoPath);
+    await fs.writeFile(albumsInfoPath, yaml.safeDump(albumsInfo));
   },
 };

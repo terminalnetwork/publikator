@@ -6,12 +6,26 @@ const debug = require('debug')('publikator:organise');
 const mime = require('mime-types');
 const tags = require('./tags');
 
-const getFolderName = file => file.common.album.replace(/ /g, '_');
+/**
+ * Given a track file, return the album name.
+ */
+const getAlbumName = file => file.common.album.replace(/ /g, '_');
 
+/**
+ * Given a track file, return the new file name.
+ */
 const getFileName = file =>
   `${file.common.track.no}-${file.common.title}${path.extname(
     file.path
   )}`.replace(/ /g, '_');
+
+/**
+ * Strips the extension from a file name;
+ */
+const stripExtension = fileName => {
+  const i = fileName.lastIndexOf('.');
+  return fileName.substr(0, i);
+};
 
 /**
  * Extracts the cover art and saves it to a file with the same name.
@@ -43,6 +57,7 @@ module.exports = {
    * Returns `taggedFiles` with the paths changed to the new paths.
    */
   byAlbum: async (root, taggedFiles) => {
+    const assetRoot = path.resolve(root, 'assets', 'albums');
     const files = taggedFiles.filter(file =>
       tags.hasTags(file, [
         'common.artists',
@@ -53,36 +68,38 @@ module.exports = {
     );
 
     debug(`grouping tracks by album`);
-    const folders = _.uniq(files.map(file => getFolderName(file)));
+    const folders = _.uniq(files.map(file => getAlbumName(file)));
     debug(`found ${folders.length} album(s)`);
     debug(folders);
 
     debug(`creating album directories`);
     await Promise.all(
-      folders.map(album => fs.ensureDir(path.resolve(root, sanitize(album))))
+      folders.map(album =>
+        fs.ensureDir(path.resolve(assetRoot, sanitize(album)))
+      )
     );
 
     debug(`copying tracks & extracting covers`);
     return Promise.all(
       files.map(async file => {
-        const folderName = getFolderName(file);
+        const folderName = getAlbumName(file);
         const fileName = getFileName(file);
-        const newPath = path.resolve(root, folderName, fileName);
+        const newPath = path.resolve(assetRoot, folderName, fileName);
         await fs.copyFile(file.path, newPath);
         const coverPath = await extractCoverArt(newPath);
         return _.assign(
           {},
           {
             path: newPath,
-            relativePath: `${folderName}/${fileName}`,
-            folderName,
-            fileName,
+            url: `/assets/albums/${folderName}/${fileName}`,
+            slug: stripExtension(fileName),
           },
           coverPath
             ? {
                 coverPath,
-                relativeCoverPath: `${folderName}/${path.basename(coverPath)}`,
-                coverFileName: path.basename(coverPath),
+                cover: `/assets/albums/${folderName}/${path.basename(
+                  coverPath
+                )}`,
               }
             : {},
           _.omit(file, 'path')
