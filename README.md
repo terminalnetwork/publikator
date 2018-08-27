@@ -7,12 +7,15 @@ Given a folder of tracks (supports mp3, ogg, flac, and many more), it will read 
 ```
 _albums/
   foo.md
+
 _data/
   albums.yml
+
 _tracks/
   foo/
     1-bar.md
     2-baz.md
+
 assets/
   foo/
     1-bar.mp3
@@ -23,7 +26,7 @@ All Markdown files will encode the metadata in the [Front Matter](https://jekyll
 
 ## Installation
 
-1.  Make sure `nodejs` is installed and up-tp-date:
+1.  Make sure [Node.js](https://nodejs.org/en/download/) is installed and up-tp-date:
 
     ```
     brew install node
@@ -48,7 +51,7 @@ publikator -h
 To organise tracks and generate release information:
 
 ```
-publikator organise pathToMySongs outputPath
+publikator organise <pathToMySongs> <outputPath>
 ```
 
 Use the `--delete` flag to start with a clean output directory.

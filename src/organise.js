@@ -9,7 +9,7 @@ const tags = require('./tags');
 /**
  * Given a track file, return the album name.
  */
-const getAlbumName = file => file.common.album.replace(/ /g, '_');
+const getAlbumName = file => file.common.album.replace(/ /g, '-');
 
 /**
  * Given a track file, return the new file name.
@@ -17,7 +17,7 @@ const getAlbumName = file => file.common.album.replace(/ /g, '_');
 const getFileName = file =>
   `${file.common.track.no}-${file.common.title}${path.extname(
     file.path
-  )}`.replace(/ /g, '_');
+  )}`.replace(/ /g, '-');
 
 /**
  * Strips the extension from a file name;
