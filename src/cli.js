@@ -22,7 +22,7 @@ program.version(packageJson.version);
 program
   .command(
     'organise',
-    'Recursively finds all mp3s in a folder, reads their tags and re-organises them'
+    'Recursively finds all tracks in a folder, reads their tags and re-organises them'
   )
   .argument('<source>', 'Root folder for the recursive search')
   .argument('<target>', 'Target folder for the restructured output')

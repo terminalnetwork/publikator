@@ -1,19 +1,50 @@
 const debug = require('debug')('publikator:scan');
+const path = require('path');
 const walk = require('walkdir');
 const tags = require('./tags');
+
+const extensions = new Set([
+  '.3gp',
+  '.aac',
+  '.aif',
+  '.aifc',
+  '.aiff',
+  '.ape',
+  '.asf',
+  '.flac',
+  '.m2a',
+  '.m4a',
+  '.m4b',
+  '.m4p',
+  '.m4r',
+  '.m4v',
+  '.mp2',
+  '.mp3',
+  '.mp3',
+  '.mp4',
+  '.oga',
+  '.ogg',
+  '.ogv',
+  '.ogx',
+  '.opus',
+  '.wav',
+  '.wma',
+  '.wmv',
+  '.wv',
+  '.wvp',
+]);
 
 module.exports = {
   /**
    * Recursively searches for files.
    */
-  findFilesSync: (root, extension = '.mp3') => {
-    debug(
-      `scanning directory '${root}' for files with extension '${extension}'`
-    );
+  findFilesSync: root => {
+    debug(`scanning directory '${root}' for audio tracks`);
     const files = [];
-    walk.sync(root, path => {
-      if (path.endsWith(extension)) {
-        files.push(path);
+    walk.sync(root, filePath => {
+      const ext = path.extname(filePath);
+      if (extensions.has(ext)) {
+        files.push(filePath);
       }
     });
     debug(`found ${files.length} file(s)`);
