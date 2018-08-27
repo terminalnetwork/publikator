@@ -89,7 +89,7 @@ layout: default
 </ul>
 ```
 
-Each individual album will be available at the url `/<album_slug>`. To create a detail page for an album, create a new layout `_layouts/album.html`:
+Each individual album will be available at the url `/albums/<album_slug>`. To create a detail page for an album, create a new layout `_layouts/album.html`:
 
 ```
 <h1>{{ page.album }}</h1>
