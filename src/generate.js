@@ -27,7 +27,7 @@ const getAlbumInfo = (root, tracks) => ({
   artists: collect(tracks, t => t.common.artists || t.common.artist),
   bitrate: collect(tracks, t => t.format.bitrate),
   trackCount: tracks.length,
-  cover: tracks[0].coverUrl || null,
+  cover: tracks[0].cover || null,
   tracks,
 });
 
