@@ -28,7 +28,7 @@ const getAlbumInfo = (root, tracks) => ({
   bitrate: collect(tracks, t => t.format.bitrate),
   trackCount: tracks.length,
   cover: tracks[0].cover || null,
-  tracks,
+  tracks: _.sortBy(tracks, 'common.track.no'),
 });
 
 /**
