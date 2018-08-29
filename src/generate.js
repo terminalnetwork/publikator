@@ -31,6 +31,21 @@ const getAlbumInfo = (root, tracks) => ({
   tracks,
 });
 
+/**
+ * Creates release information for a single track.
+ */
+const getTrackInfo = (albumInfo, trackIndex) => {
+  const nextTrackIndex = (trackIndex + 1) % albumInfo.trackCount;
+  const previousTrackIndex =
+    trackIndex === 0 ? albumInfo.trackCount - 1 : trackIndex - 1;
+  return {
+    layout: 'track',
+    ...albumInfo.tracks[trackIndex],
+    nextTrack: albumInfo.tracks[nextTrackIndex],
+    previousTrack: albumInfo.tracks[previousTrackIndex],
+  };
+};
+
 module.exports = {
   /**
    * Generates Jekyll-compatible release data
@@ -60,7 +75,8 @@ module.exports = {
 
         // Write track collection
         await Promise.all(
-          tracks.map(async track => {
+          tracks.map(async (_0, i) => {
+            const track = getTrackInfo(albumInfo, i);
             const trackInfoPath = path.resolve(
               trackCollectionRoot,
               baseName,
@@ -69,10 +85,7 @@ module.exports = {
             await fs.ensureFile(trackInfoPath);
             await fs.writeFile(
               trackInfoPath,
-              `---\n${yaml.safeDump({
-                layout: 'track',
-                ...track,
-              })}---\n`
+              `---\n${yaml.safeDump(track)}---\n`
             );
           })
         );
