@@ -91,7 +91,7 @@ module.exports = {
           {},
           {
             path: newPath,
-            url: `/assets/albums/${folderName}/${fileName}`,
+            audio_url: `/assets/albums/${folderName}/${fileName}`,
             slug: stripExtension(fileName),
           },
           coverPath
