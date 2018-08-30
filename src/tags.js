@@ -6,12 +6,29 @@ module.exports = {
   /**
    * Reads tags from a track.
    */
-  readTags: file =>
-    mm.parseFile(file, {
+  readTags: async file => {
+    const metaData = await mm.parseFile(file, {
       duration: true,
       native: true,
       skipCovers: true,
-    }),
+    });
+    // Transform arrays to objects, so we can access them easily in Jekyll
+    metaData.transformed = _.transform(
+      metaData.native,
+      (result, value, key) => {
+        result[key] = value.reduce((all, item) => {
+          if (item.value && item.value.text && item.value.description) {
+            all[item.value.description] = item.value.text;
+          } else {
+            all[item.id] = item.value;
+          }
+          return all;
+        }, {});
+      },
+      {}
+    );
+    return metaData;
+  },
 
   /**
    * Extracts the cover art into a file stream.

@@ -6,3 +6,5 @@ env:
 extends:
   - airbnb-base
   - prettier
+rules:
+  no-param-reassign: off
