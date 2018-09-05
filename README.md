@@ -26,7 +26,7 @@ All Markdown files will encode the metadata in the [Front Matter](https://jekyll
 
 ## Installation
 
-1.  Make sure [Node.js](https://nodejs.org/en/download/) is installed and up-tp-date:
+1.  Make sure [Node.js](https://nodejs.org/en/download/) is installed and up-to-date:
 
     ```
     brew install node
