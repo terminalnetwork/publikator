@@ -27,6 +27,11 @@ module.exports = {
       },
       {}
     );
+    // Create a single tag object from the transformed tag data
+    metaData.all = Object.keys(metaData.transformed).reduce(
+      (all, key) => _.assign(all, metaData.transformed[key]),
+      {}
+    );
     return metaData;
   },
 
