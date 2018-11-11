@@ -24,6 +24,18 @@ const find = (tracks, path) =>
   _.get(tracks.find(track => !_.isNil(_.get(track, path))), path);
 
 /**
+ * Parses a date and returns it in the form of `year-month-day`.
+ */
+const parseDate = s => {
+  if (!_.isNil(s)) {
+    const d = new Date(s.toString());
+    if (!_.isNaN(d.getTime())) {
+      return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    }
+  }
+};
+
+/**
  * Creates release information for a single album.
  */
 const getAlbumInfo = (root, tracks) => ({
@@ -34,13 +46,14 @@ const getAlbumInfo = (root, tracks) => ({
   bitrate: collect(tracks, t => t.format.bitrate),
   trackCount: tracks.length,
   cover: find(tracks, 'cover'),
-  date:
+  date: parseDate(
     find(tracks, 'common.date') ||
-    find(tracks, 'common.originaldate') ||
-    find(tracks, 'all.ORIGINALDATE') ||
-    find(tracks, 'common.year') ||
-    find(tracks, 'common.originalyear') ||
-    find(tracks, 'all.ORIGINALYEAR'),
+      find(tracks, 'common.originaldate') ||
+      find(tracks, 'all.ORIGINALDATE') ||
+      find(tracks, 'common.year') ||
+      find(tracks, 'common.originalyear') ||
+      find(tracks, 'all.ORIGINALYEAR')
+  ),
   tracks: _.sortBy(tracks, 'common.track.no'),
 });
 
