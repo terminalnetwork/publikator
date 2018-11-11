@@ -18,17 +18,29 @@ const collect = (tracks, callback) => {
 };
 
 /**
+ * Returns the first defined metadata at the specified path.
+ */
+const find = (tracks, path) =>
+  _.get(tracks.find(track => !_.isNil(_.get(track, path))), path);
+
+/**
  * Creates release information for a single album.
  */
 const getAlbumInfo = (root, tracks) => ({
   layout: 'album',
   slug: path.basename(root),
-  name: tracks[0].common.album || '',
+  name: find(tracks, 'common.album'),
   artists: collect(tracks, t => t.common.artists || t.common.artist),
   bitrate: collect(tracks, t => t.format.bitrate),
   trackCount: tracks.length,
-  cover: tracks[0].cover || null,
-  date: tracks[0].common.date || null,
+  cover: find(tracks, 'cover'),
+  date:
+    find(tracks, 'common.date') ||
+    find(tracks, 'common.originaldate') ||
+    find(tracks, 'all.ORIGINALDATE') ||
+    find(tracks, 'common.year') ||
+    find(tracks, 'common.originalyear') ||
+    find(tracks, 'all.ORIGINALYEAR'),
   tracks: _.sortBy(tracks, 'common.track.no'),
 });
 
@@ -46,6 +58,14 @@ const getTrackInfo = (albumInfo, trackIndex) => {
     previousTrack: albumInfo.tracks[previousTrackIndex],
   };
 };
+
+/**
+ * Converts an object to YAML.
+ */
+const toYaml = obj =>
+  yaml.safeDump(obj, {
+    skipInvalid: true,
+  });
 
 module.exports = {
   /**
@@ -68,7 +88,7 @@ module.exports = {
           } track(s)`
         );
         const albumInfo = getAlbumInfo(albumRoot, tracks);
-        const releaseInfo = `---\n${yaml.safeDump(albumInfo)}---\n`;
+        const releaseInfo = `---\n${toYaml(albumInfo)}---\n`;
         await fs.writeFile(
           path.resolve(albumCollectionRoot, `${baseName}.md`),
           releaseInfo
@@ -84,10 +104,7 @@ module.exports = {
               `${track.slug}.md`
             );
             await fs.ensureFile(trackInfoPath);
-            await fs.writeFile(
-              trackInfoPath,
-              `---\n${yaml.safeDump(track)}---\n`
-            );
+            await fs.writeFile(trackInfoPath, `---\n${toYaml(track)}---\n`);
           })
         );
 
@@ -99,6 +116,6 @@ module.exports = {
     debug(`generating data for ${albumsInfo.length} album(s)`);
     const albumsInfoPath = path.resolve(root, '_data', 'albums.yml');
     await fs.ensureFile(albumsInfoPath);
-    await fs.writeFile(albumsInfoPath, yaml.safeDump(albumsInfo));
+    await fs.writeFile(albumsInfoPath, toYaml(albumsInfo));
   },
 };

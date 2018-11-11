@@ -1,6 +1,6 @@
 {
   "name": "publikator",
-  "version": "0.17.3",
+  "version": "0.17.5",
   "main": "index.js",
   "repository": "https://github.com/aengl/publikator.git",
   "author": "Lynn Smeria <ae@cephea.de>",
