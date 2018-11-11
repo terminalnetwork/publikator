@@ -60,7 +60,7 @@ module.exports = {
     tags.reduce((all, tag) => {
       const value = _.get(taggedFile, tag);
       if (value !== undefined) {
-        all[tag] = value; // eslint-disable-line
+        all[tag] = value;
       }
       return all;
     }, {}),

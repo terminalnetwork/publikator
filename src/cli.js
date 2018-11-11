@@ -1,13 +1,13 @@
+const path = require('path');
 const debugModule = require('debug');
 const fs = require('fs-extra');
-const path = require('path');
 const program = require('caporal');
+const packageJson = require('../package.json');
 const scan = require('./scan');
 const organise = require('./organise');
 const generate = require('./generate');
 
 const debug = debugModule('publikator:cli');
-const packageJson = require('../package.json');
 
 process.on('unhandledRejection', error => {
   throw error;

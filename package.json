@@ -11,6 +11,14 @@
   "engines": {
     "node": ">=8"
   },
+  "xo": {
+    "prettier": true
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
   "dependencies": {
     "@types/mime-types": "2.1.0",
     "caporal": "0.10.0",
@@ -24,12 +32,8 @@
     "walkdir": "0.0.12"
   },
   "devDependencies": {
-    "eslint": "5.4.0",
-    "eslint-config-airbnb-base": "13.1.0",
-    "eslint-config-prettier": "3.0.1",
-    "eslint-plugin-import": "2.14.0",
-    "eslint-plugin-jsx-a11y": "6.1.1",
-    "nodemon": "1.18.3"
+    "nodemon": "1.18.3",
+    "xo": "0.23.0"
   },
   "scripts": {
     "dev": "nodemon src/cli.js"

@@ -1,5 +1,5 @@
-const fs = require('fs-extra');
 const path = require('path');
+const fs = require('fs-extra');
 const _ = require('lodash');
 const sanitize = require('sanitize-filename');
 const debug = require('debug')('publikator:organise');

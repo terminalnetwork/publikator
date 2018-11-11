@@ -1,5 +1,5 @@
-const fs = require('fs-extra');
 const path = require('path');
+const fs = require('fs-extra');
 const _ = require('lodash');
 const yaml = require('js-yaml');
 const debug = require('debug')('publikator:generate');
@@ -8,8 +8,8 @@ const debug = require('debug')('publikator:generate');
  * Collects unique values across a number of tracks.
  */
 const collect = (tracks, callback) => {
-  const values = _.uniq(_.flatten(tracks.map(t => callback(t)))).filter(
-    x => !!x
+  const values = _.uniq(_.flatten(tracks.map(t => callback(t)))).filter(x =>
+    Boolean(x)
   );
   if (values.length === 0) {
     return null;

@@ -1,5 +1,5 @@
-const debug = require('debug')('publikator:scan');
 const path = require('path');
+const debug = require('debug')('publikator:scan');
 const walk = require('walkdir');
 const tags = require('./tags');
 
