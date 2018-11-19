@@ -1,6 +1,6 @@
 {
   "name": "publikator",
-  "version": "0.17.7",
+  "version": "0.17.11",
   "main": "index.js",
   "repository": "https://github.com/aengl/publikator.git",
   "author": "Lynn Smeria <ae@cephea.de>",
@@ -21,13 +21,13 @@
   },
   "dependencies": {
     "@types/mime-types": "2.1.0",
-    "caporal": "0.10.0",
+    "caporal": "1.1.0",
     "debug": "4.1.0",
     "fs-extra": "7.0.1",
     "js-yaml": "3.12.0",
     "lodash": "4.17.11",
     "mime-types": "2.1.21",
-    "music-metadata": "3.1.6",
+    "music-metadata": "3.2.1",
     "sanitize-filename": "1.6.1",
     "walkdir": "0.0.12"
   },
