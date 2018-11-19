@@ -88,13 +88,15 @@ module.exports = {
         const newPath = path.resolve(assetRoot, folderName, fileName);
         await fs.copyFile(file.path, newPath);
         const coverPath = await extractCoverArt(newPath);
+        const trackSlug = stripExtension(fileName);
         return _.assign(
           {},
           {
             path: newPath,
             audio: `/assets/albums/${folderName}/${fileName}`,
+            slug: `${folderName}/${trackSlug}`,
             albumSlug: folderName,
-            slug: stripExtension(fileName),
+            trackSlug,
           },
           coverPath
             ? {
