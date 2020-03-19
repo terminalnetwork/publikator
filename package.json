@@ -26,14 +26,14 @@
     "fs-extra": "8.1.0",
     "js-yaml": "3.13.1",
     "lodash": "4.17.15",
-    "mime-types": "2.1.24",
-    "music-metadata": "4.4.0",
+    "mime-types": "2.1.26",
+    "music-metadata": "6.3.6",
     "sanitize-filename": "1.6.3",
     "walkdir": "0.4.1"
   },
   "devDependencies": {
-    "nodemon": "1.19.1",
-    "xo": "0.24.0"
+    "nodemon": "2.0.2",
+    "xo": "0.28.0"
   },
   "scripts": {
     "dev": "nodemon src/cli.js"
