@@ -21,7 +21,10 @@ const collect = (tracks, callback) => {
  * Returns the first defined metadata at the specified path.
  */
 const find = (tracks, path) =>
-  _.get(tracks.find(track => !_.isNil(_.get(track, path))), path);
+  _.get(
+    tracks.find(track => !_.isNil(_.get(track, path))),
+    path
+  );
 
 /**
  * Parses a date and returns it in the form of `year-month-day`.
@@ -96,9 +99,7 @@ module.exports = {
         const albumCollectionRoot = path.resolve(root, '_albums');
         await fs.ensureDir(albumCollectionRoot);
         debug(
-          `generating release info for album '${baseName}' with ${
-            tracks.length
-          } track(s)`
+          `generating release info for album '${baseName}' with ${tracks.length} track(s)`
         );
         const albumInfo = getAlbumInfo(albumRoot, tracks);
         const releaseInfo = `---\n${toYaml(albumInfo)}---\n`;
@@ -114,7 +115,7 @@ module.exports = {
             const trackInfoPath = path.resolve(
               trackCollectionRoot,
               baseName,
-              `${track.slug}.md`
+              `${track.trackSlug}.md`
             );
             await fs.ensureFile(trackInfoPath);
             await fs.writeFile(trackInfoPath, `---\n${toYaml(track)}---\n`);
